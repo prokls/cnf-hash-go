@@ -61,6 +61,7 @@ func main() {
 
 	// manual CLI parsing, because I dislike the "flag" package
 	ignore := false
+	checkHeader := false
 	for i, arg := range os.Args {
 		if i == 0 {
 			continue
@@ -72,6 +73,8 @@ func main() {
 			fullPath = true
 		} else if arg == "--ignore" {
 			ignore = true
+		} else if arg == "--header-check" {
+			checkHeader = true
 		} else {
 			dimacsFiles = append(dimacsFiles, arg)
 		}
@@ -79,9 +82,10 @@ func main() {
 
 	// usage information
 	if len(dimacsFiles) == 0 {
-		fmt.Println("cnf-hash-go [--fullpath] [--ignore C] [file.cnf]+")
+		fmt.Println("cnf-hash-go [--fullpath] [--ignore C] [--header-check] [file.cnf]+")
 		fmt.Println()
 		fmt.Println("  --fullpath      print full path of CNF file, not basename")
+		fmt.Println("  --header-check  check values of CNF header")
 		fmt.Println("  --ignore C      ignore all lines beginning with C")
 		fmt.Println("  file.cnf        DIMACS files representing some CNF")
 		fmt.Println()
@@ -104,6 +108,7 @@ func main() {
 		go func(dimacsFile string, ignoreLines []string) {
 			var hashValue string
 			var conf cnfhash.Config
+			conf.CheckHeader = checkHeader
 			conf.IgnoreLines = ignoreLines
 			if strings.HasSuffix(dimacsFile, ".gz") {
 				hashValue = runGzip(dimacsFile, conf)
