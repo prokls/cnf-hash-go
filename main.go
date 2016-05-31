@@ -102,7 +102,7 @@ func main() {
 		return
 	}
 
-	fmt.Println("cnf-hash 2.1.0 " + timestamp + " " + pwd)
+	fmt.Println("cnf-hash 2.1.1 " + timestamp + " " + pwd)
 	for i := 0; i < len(dimacsFiles); i++ {
 		wait.Add(1)
 		go func(dimacsFile string, ignoreLines []string) {
