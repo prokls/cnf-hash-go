@@ -3,7 +3,7 @@ cnf-hash-go
 
 :author:        Lukas Prokop
 :date:          August 2015, May 2016
-:version:       1.1.0
+:version:       2.0.0
 :license:       CC-0
 
 A Go implementation to hash CNF/DIMACS files.
@@ -137,8 +137,8 @@ Example
     1 3 5 0
     1 -4 -5 0
     % cnf-hash-go test.cnf
-    cnf-hash 1.1.0 2016-05-29T14:01:41Z /root
-    cnf1$7ca8bbcc091459201571acc083fbde4f7b1fcc94  test.cnf
+    cnf-hash 2.0.0 2016-05-29T14:01:41Z /root
+    cnf2$776d81a0c805104e265667917b22ffefe9f39433  test.cnf
     %
 
 Cheers!

@@ -13,7 +13,6 @@ const clauseDelim = "0\n"
 
 func HashCNF(in <-chan int64, out chan<- string) {
 	var hasher hash.Hash = sha1.New()
-	io.WriteString(hasher, "p cnf ")
 	i := 0
 	for integer := range in {
 		if i < 2 {
@@ -29,7 +28,7 @@ func HashCNF(in <-chan int64, out chan<- string) {
 			io.WriteString(hasher, literalDelim)
 		}
 	}
-	out <- "cnf1$" + hex.EncodeToString(hasher.Sum(nil))
+	out <- "cnf2$" + hex.EncodeToString(hasher.Sum(nil))
 }
 
 func HashDIMACS(in io.Reader, conf Config) (string, error) {
