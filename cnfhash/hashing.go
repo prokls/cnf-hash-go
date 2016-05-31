@@ -14,6 +14,7 @@ const clauseDelim = "0\n"
 func HashCNF(in <-chan int64, out chan<- string) {
 	var hasher hash.Hash = sha1.New()
 	i := 0
+	wasZero := true
 	for integer := range in {
 		if i < 2 {
 			i++
@@ -22,11 +23,20 @@ func HashCNF(in <-chan int64, out chan<- string) {
 		strRepr := strconv.FormatInt(integer, 10)
 
 		if integer == 0 {
+			// ignore multiple clause terminators
+			if wasZero {
+				continue
+			}
 			io.WriteString(hasher, clauseDelim)
+			wasZero = true
 		} else {
 			io.WriteString(hasher, strRepr)
 			io.WriteString(hasher, literalDelim)
+			wasZero = false
 		}
+	}
+	if !wasZero {
+		io.WriteString(hasher, clauseDelim)
 	}
 	out <- "cnf2$" + hex.EncodeToString(hasher.Sum(nil))
 }
