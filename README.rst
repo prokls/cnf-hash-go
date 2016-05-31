@@ -3,11 +3,11 @@ cnf-hash-go
 
 :author:        Lukas Prokop
 :date:          August 2015, May 2016
-:version:       1.0.0
+:version:       1.1.0
 :license:       CC-0
 
 A Go implementation to hash CNF/DIMACS files.
-See `the technical report <http://lukas-prokop.at/proj/megosat/downloads/cnf-hash-1.0.0.pdf>`_ for more details.
+See `the technical report <http://lukas-prokop.at/proj/megosat/downloads/cnf-hash.pdf>`_ for more details.
 
 How to use
 ----------
@@ -39,7 +39,7 @@ Then use this import URL to use the package. Example::
         // or hash integers directly
 
         inChan := make(chan int64)
-        outChan := make(chan string) 
+        outChan := make(chan string)
         ints := []int64{3, 2, 1, -3, 0, -1, 2, 0}
 
         go cnfhash.HashCNF(inChan, outChan)
@@ -137,7 +137,7 @@ Example
     1 3 5 0
     1 -4 -5 0
     % cnf-hash-go test.cnf
-    cnf-hash 1.0.0 2016-05-29T14:01:41Z /root
+    cnf-hash 1.1.0 2016-05-29T14:01:41Z /root
     cnf1$7ca8bbcc091459201571acc083fbde4f7b1fcc94  test.cnf
     %
 
