@@ -21,8 +21,9 @@ func checkFile(t *testing.T, w *sync.WaitGroup, filepath string) {
 
 	defer fd.Close()
 
-	hashValue, err := cnfhash.HashDIMACS(fd, []string{"c"})
-	if len(hashValue) > 6 && strings.HasPrefix(hashValue, "cnf1$") {
+	conf := cnfhash.Config{[]string{"c"}, false}
+	hashValue, err := cnfhash.HashDIMACS(fd, conf)
+	if len(hashValue) > 6 && strings.HasPrefix(hashValue, "cnf2$") {
 		hashValue = hashValue[5:]
 	}
 	// skip test cases testing value >=2^64
