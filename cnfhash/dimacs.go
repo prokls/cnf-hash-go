@@ -45,12 +45,18 @@ func init() {
 // The first two integers represent nbvars and nbclauses. The following
 // integers represent literals in clauses terminated by a zero.
 // The integers are passed to the integer channel provided as argument.
-// ignoreLines defines single-character prefixes for lines to ignore
-func ParseDimacsFileIntegers(in io.Reader, out chan<- int64, errChan chan<- error, ignoreLines []string) {
+// conf allows to parameterize
+func ParseDimacsFileIntegers(in io.Reader, out chan<- int64, errChan chan<- error, conf Config) {
 	var err error
 
+	if conf.IgnoreLines == nil {
+		conf.IgnoreLines = make([]string, 2)
+		conf.IgnoreLines = append(conf.IgnoreLines, "c")
+		conf.IgnoreLines = append(conf.IgnoreLines, "%")
+	}
+
 	// preparation & initialization
-	matchComment, err = regexp.Compile("^(" + strings.Join(ignoreLines, "|") + ")(\\s+|$)")
+	matchComment, err = regexp.Compile("^(" + strings.Join(conf.IgnoreLines, "|") + ")(\\s+|$)")
 	if err != nil {
 		panic(err)
 	}
@@ -59,6 +65,7 @@ func ParseDimacsFileIntegers(in io.Reader, out chan<- int64, errChan chan<- erro
 	var tmp int64
 	lineno := 1
 	state := 0
+	clauses := int64(0)
 	wasZero := false
 
 	// read line by line
@@ -115,10 +122,15 @@ func ParseDimacsFileIntegers(in io.Reader, out chan<- int64, errChan chan<- erro
 					errChan <- err
 					return
 				}
+				if conf.CheckHeader && !(-nbVars <= tmp && tmp < nbVars) {
+					errChan <- fmt.Errorf("%d outside of range %d to %d", tmp, -nbVars, nbVars)
+					return
+				}
 				if wasZero && tmp == 0 { // ignore consecutive zeros
 					continue
 				}
 				if tmp == 0 {
+					clauses++
 					wasZero = true
 				} else {
 					wasZero = false
@@ -133,6 +145,10 @@ func ParseDimacsFileIntegers(in io.Reader, out chan<- int64, errChan chan<- erro
 	}
 	if state != 1 {
 		errChan <- errors.New("Empty DIMACS file, expected at least a header")
+		return
+	}
+	if conf.CheckHeader && clauses != nbClauses {
+		errChan <- fmt.Errorf("Expected %d clauses, got %d clauses", nbClauses, clauses)
 		return
 	}
 	if !wasZero {

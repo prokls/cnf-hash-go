@@ -12,14 +12,14 @@ import (
 	"github.com/prokls/cnf-hash-go/cnfhash"
 )
 
-func runFile(dimacsFile string, ignoreLines []string) string {
+func runFile(dimacsFile string, conf cnfhash.Config) string {
 	fd, err := os.Open(dimacsFile)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error opening "+dimacsFile, err)
 		return ""
 	}
 	defer fd.Close()
-	hashvalue, err := cnfhash.HashDIMACS(fd, ignoreLines)
+	hashvalue, err := cnfhash.HashDIMACS(fd, conf)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error computing hash value for "+dimacsFile, err)
 		return ""
@@ -27,7 +27,7 @@ func runFile(dimacsFile string, ignoreLines []string) string {
 	return hashvalue
 }
 
-func runGzip(archive string, ignoreLines []string) string {
+func runGzip(archive string, conf cnfhash.Config) string {
 	gzipFd, err := os.Open(archive)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error opening "+archive, err)
@@ -42,7 +42,7 @@ func runGzip(archive string, ignoreLines []string) string {
 	}
 	defer fd.Close()
 
-	hashvalue, err := cnfhash.HashDIMACS(fd, ignoreLines)
+	hashvalue, err := cnfhash.HashDIMACS(fd, conf)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error computing hash value in archive "+archive, err)
 		return ""
@@ -103,10 +103,12 @@ func main() {
 		wait.Add(1)
 		go func(dimacsFile string, ignoreLines []string) {
 			var hashValue string
+			var conf cnfhash.Config
+			conf.IgnoreLines = ignoreLines
 			if strings.HasSuffix(dimacsFile, ".gz") {
-				hashValue = runGzip(dimacsFile, ignoreLines)
+				hashValue = runGzip(dimacsFile, conf)
 			} else {
-				hashValue = runFile(dimacsFile, ignoreLines)
+				hashValue = runFile(dimacsFile, conf)
 			}
 			if hashValue == "" {
 				success = false

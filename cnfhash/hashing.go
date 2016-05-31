@@ -32,12 +32,12 @@ func HashCNF(in <-chan int64, out chan<- string) {
 	out <- "cnf1$" + hex.EncodeToString(hasher.Sum(nil))
 }
 
-func HashDIMACS(in io.Reader, ignoreLines []string) (string, error) {
+func HashDIMACS(in io.Reader, conf Config) (string, error) {
 	intChan := make(chan int64)
 	errChan := make(chan error)
 	outChan := make(chan string)
 
-	go ParseDimacsFileIntegers(in, intChan, errChan, ignoreLines)
+	go ParseDimacsFileIntegers(in, intChan, errChan, conf)
 	go HashCNF(intChan, outChan)
 
 	for {
