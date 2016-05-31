@@ -151,9 +151,12 @@ func ParseDimacsFileIntegers(in io.Reader, out chan<- int64, errChan chan<- erro
 		errChan <- fmt.Errorf("Expected %d clauses, got %d clauses", nbClauses, clauses)
 		return
 	}
-	if conf.CheckHeader && !wasZero {
-		errChan <- errors.New("CNFs must be terminated by a zero for the last clause")
-		return
+	if !wasZero {
+		if conf.CheckHeader {
+			errChan <- errors.New("CNFs must be terminated by a zero for the last clause")
+			return
+		}
+		out <- 0
 	}
 
 	close(out)
