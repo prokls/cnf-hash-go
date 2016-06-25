@@ -86,7 +86,7 @@ func main() {
 		fmt.Println()
 		fmt.Println("  --fullpath      print full path of CNF file, not basename")
 		fmt.Println("  --header-check  check values of CNF header")
-		fmt.Println("  --ignore C      ignore all lines beginning with C")
+		fmt.Println("  --ignore C      ignore all lines starting with character C")
 		fmt.Println("  file.cnf        DIMACS files representing some CNF")
 		fmt.Println()
 
