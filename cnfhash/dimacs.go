@@ -83,14 +83,14 @@ func ParseDimacsFileIntegers(in io.Reader, out chan<- int64, errChan chan<- erro
 		} else if state == 0 {
 			var matches []string = matchHeader.FindStringSubmatch(line)
 			if len(matches) == 0 {
-				errChan <- errors.New("Got invalid DIMACS header line, " +
-					"expected one with 'p cnf ... ...'" + errSuffix)
+				errChan <- errors.New("got invalid DIMACS header line, " +
+					"expected one like 'p cnf <int> <int>'" + errSuffix)
 				return
 			}
 
 			for i := 1; i <= 2; i++ {
 				if len(matches[i]) > 20 {
-					errChan <- fmt.Errorf("Implementation only supports <2^64 values")
+					errChan <- fmt.Errorf("implementation only supports <2^64 values")
 					return
 				}
 			}
@@ -114,7 +114,7 @@ func ParseDimacsFileIntegers(in io.Reader, out chan<- int64, errChan chan<- erro
 			var matches [][]string = matchInteger.FindAllStringSubmatch(line, -1)
 			for j := 0; j < len(matches); j++ {
 				if len(matches[j][0]) > 20 {
-					errChan <- fmt.Errorf("Implementation only supports <2^64 values")
+					errChan <- fmt.Errorf("implementation only supports <2^64 values")
 					return
 				}
 				tmp, err = strconv.ParseInt(matches[j][0], 10, 64)
@@ -144,11 +144,11 @@ func ParseDimacsFileIntegers(in io.Reader, out chan<- int64, errChan chan<- erro
 		return
 	}
 	if state != 1 {
-		errChan <- errors.New("Empty DIMACS file, expected at least a header")
+		errChan <- errors.New("empty DIMACS file, expected at least a header")
 		return
 	}
 	if conf.CheckHeader && clauses != nbClauses {
-		errChan <- fmt.Errorf("Expected %d clauses, got %d clauses", nbClauses, clauses)
+		errChan <- fmt.Errorf("expected %d clauses, got %d clauses", nbClauses, clauses)
 		return
 	}
 	if !wasZero {

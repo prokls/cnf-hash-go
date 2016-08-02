@@ -15,13 +15,15 @@ import (
 func runFile(dimacsFile string, conf cnfhash.Config) string {
 	fd, err := os.Open(dimacsFile)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "error opening "+dimacsFile, err)
+		fmt.Fprintf(os.Stderr, "error opening file '%s'\n", dimacsFile)
+		fmt.Fprintf(os.Stderr, err.Error())
 		return ""
 	}
 	defer fd.Close()
 	hashvalue, err := cnfhash.HashDIMACS(fd, conf)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "error computing hash value for "+dimacsFile, err)
+		fmt.Fprintf(os.Stderr, "error computing hash value for '%s'\n", dimacsFile)
+		fmt.Fprintf(os.Stderr, err.Error())
 		return ""
 	}
 	return hashvalue
@@ -30,21 +32,24 @@ func runFile(dimacsFile string, conf cnfhash.Config) string {
 func runGzip(archive string, conf cnfhash.Config) string {
 	gzipFd, err := os.Open(archive)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "error opening "+archive, err)
+		fmt.Fprintf(os.Stderr, "error opening '%s'\n", archive)
+		fmt.Fprintf(os.Stderr, err.Error())
 		return ""
 	}
 	defer gzipFd.Close()
 
 	fd, err := gzip.NewReader(gzipFd)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "error opening "+archive, err)
+		fmt.Fprintf(os.Stderr, "error opening '%s'\n", archive)
+		fmt.Fprintf(os.Stderr, err.Error())
 		return ""
 	}
 	defer fd.Close()
 
 	hashvalue, err := cnfhash.HashDIMACS(fd, conf)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "error computing hash value in archive "+archive, err)
+		fmt.Fprintf(os.Stderr, "error computing hash value in archive '%s'\n", archive)
+		fmt.Fprintf(os.Stderr, err.Error())
 		return ""
 	}
 
@@ -98,7 +103,8 @@ func main() {
 	timestamp := time.Now().UTC().Format(time.RFC3339)
 	pwd, err := os.Getwd()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "error determining working directory", err)
+		fmt.Fprintf(os.Stderr, "error determining working directory")
+		fmt.Fprintf(os.Stderr, err.Error())
 		return
 	}
 
@@ -117,11 +123,13 @@ func main() {
 			}
 			if hashValue == "" {
 				success = false
-			}
-			if fullPath {
-				fmt.Printf("%s  %s\n", hashValue, dimacsFile)
+				fmt.Fprintf(os.Stderr, "error while processing file '%s' - skipping file\n", dimacsFile)
 			} else {
-				fmt.Printf("%s  %s\n", hashValue, path.Base(dimacsFile))
+				if fullPath {
+					fmt.Printf("%s  %s\n", hashValue, dimacsFile)
+				} else {
+					fmt.Printf("%s  %s\n", hashValue, path.Base(dimacsFile))
+				}
 			}
 			wait.Done()
 		}(dimacsFiles[i], ignoreLines)
