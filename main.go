@@ -74,7 +74,7 @@ func main() {
 		if ignore {
 			ignoreLines = append(ignoreLines, arg)
 			ignore = false
-		} else if arg == "--fullpath" || arg == "f" {
+		} else if arg == "--fullpath" || arg == "-f" {
 			fullPath = true
 		} else if arg == "--ignore" {
 			ignore = true
