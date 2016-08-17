@@ -140,6 +140,9 @@ func ParseDimacsFileIntegers(in io.Reader, out chan<- int64, errChan chan<- erro
 		}
 	}
 	if err = scanner.Err(); err != nil {
+		// Errors such as "bufio.Scanner: token too long"
+		// will occur if lines are extra long
+		// like 81085 bytes as in SAT09-Competition:appli/SAT09/APPLICATIONS/aprove09/AProVE09-03.cnf
 		errChan <- err
 		return
 	}
