@@ -16,14 +16,14 @@ func runFile(dimacsFile string, conf cnfhash.Config) string {
 	fd, err := os.Open(dimacsFile)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error opening file '%s'\n", dimacsFile)
-		fmt.Fprintf(os.Stderr, err.Error())
+		fmt.Fprintf(os.Stderr, err.Error()+"\n")
 		return ""
 	}
 	defer fd.Close()
 	hashvalue, err := cnfhash.HashDIMACS(fd, conf)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error computing hash value for '%s'\n", dimacsFile)
-		fmt.Fprintf(os.Stderr, err.Error())
+		fmt.Fprintf(os.Stderr, err.Error()+"\n")
 		return ""
 	}
 	return hashvalue
